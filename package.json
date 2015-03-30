@@ -6,7 +6,8 @@
   "scripts": {
     "coverage": "istanbul cover _mocha -- test/*.js",
     "coveralls": "npm run coverage && coveralls < coverage/lcov.info",
-    "test": "istanbul test mocha -- --reporter list test/*.js"
+    "test": "istanbul test mocha -- --reporter list test/*.js",
+    "compile": "browserify src/index.js -s bip32 > bip32.js"
   },
   "repository": {
     "type": "git",
