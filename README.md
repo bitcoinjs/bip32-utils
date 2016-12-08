@@ -18,7 +18,7 @@ var bip32utils = require('bip32-utils')
 
 // ...
 
-var m = bitcoin.HDNode.fromSeedHex(seedHex)
+var hdNode = bitcoin.HDNode.fromSeedHex(seedHex)
 var i = hdNode.deriveHardened(0)
 var external = i.derive(0)
 var internal = i.derive(1)
