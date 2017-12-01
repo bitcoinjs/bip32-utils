@@ -14,11 +14,13 @@ module.exports = function discovery (chain, gapLimit, queryCb, done) {
       checked++
     }
 
-    queryCb(batch, function (err, results) {
+    queryCb(batch, function (err, queryResultSet) {
+      if (Array.isArray(queryResultSet)) return done(new TypeError('Expected query set, not Array'))
       if (err) return done(err)
 
-      results.forEach(function (isUsed) {
-        if (isUsed) {
+      // iterate batch, guarantees order agnostic of queryCb result ordering
+      batch.forEach(function (address) {
+        if (queryResultSet[address]) {
           gap = 0
         } else {
           gap += 1

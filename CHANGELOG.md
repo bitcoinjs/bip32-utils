@@ -1,3 +1,6 @@
+# 0.11.0
+* changes `discoverChain` `queryCb` requirement to return an object, not Array
+
 # 0.9.0
 * add `Account.prototype.derive(address, parents)`
 * removes `Account.prototype.getChildrenMap`, replaced with `.derive`
