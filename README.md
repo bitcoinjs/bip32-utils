@@ -35,7 +35,7 @@ account.nextChainAddress(0)
 console.log(account.getChainAddress(1))
 // => 1DAi282VN7Ack9o5BqWYkiEsS8Vgx1rLn
 
-console.log(account.getChainAddress(1))
+console.log(account.nextChainAddress(1))
 // => 1CXKM323V3kkrHmZQYPUTftGh9VrAWuAYX
 
 console.log(account.derive('1QEj2WQD9vxTzsGEvnmLpvzeLVrpzyKkGt'))
