@@ -1,5 +1,29 @@
-function DEFAULT_ADDRESS_FUNCTION (node) {
-  return node.getAddress()
+var Buffer = require('safe-buffer').Buffer
+var createHash = require('create-hash')
+var bs58check = require('bs58check')
+
+function ripemd160 (buffer) {
+  return createHash('rmd160').update(buffer).digest()
+}
+
+function sha256 (buffer) {
+  return createHash('sha256').update(buffer).digest()
+}
+
+function hash160 (buffer) {
+  return ripemd160(sha256(buffer))
+}
+
+function toBase58Check (hash, version) {
+  var payload = Buffer.allocUnsafe(21)
+  payload.writeUInt8(version, 0)
+  hash.copy(payload, 1)
+
+  return bs58check.encode(payload)
+}
+
+function DEFAULT_ADDRESS_FUNCTION (node, network) {
+  return toBase58Check(hash160(node.publicKey), network.pubKeyHash)
 }
 
 function Chain (parent, k, addressFunction) {
@@ -13,7 +37,7 @@ function Chain (parent, k, addressFunction) {
 }
 
 Chain.prototype.__initialize = function () {
-  var address = this.addressFunction(this.__parent.derive(this.k))
+  var address = this.addressFunction(this.__parent.derive(this.k), this.__parent.network)
   this.map[address] = this.k
   this.addresses.push(address)
 }
@@ -57,7 +81,7 @@ Chain.prototype.getParent = function () {
 
 Chain.prototype.next = function () {
   if (this.addresses.length === 0) this.__initialize()
-  var address = this.addressFunction(this.__parent.derive(this.k + 1))
+  var address = this.addressFunction(this.__parent.derive(this.k + 1), this.__parent.network)
 
   this.k += 1
   this.map[address] = this.k

@@ -1,4 +1,5 @@
 var bitcoinjs = require('bitcoinjs-lib')
+var bip32 = require('bip32')
 var Chain = require('../chain')
 var discovery = require('../discovery')
 var test = require('tape')
@@ -7,7 +8,7 @@ var fixtures = require('./fixtures/discovery')
 
 fixtures.valid.forEach(function (f) {
   var network = bitcoinjs.networks[f.network]
-  var external = bitcoinjs.HDNode.fromBase58(f.external, network)
+  var external = bip32.fromBase58(f.external, network)
   var chain = new Chain(external, f.k)
 
   test('discovers until ' + f.expected.used + ' for ' + f.description + ' (GAP_LIMIT = ' + f.gapLimit + ')', function (t) {

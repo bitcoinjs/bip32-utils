@@ -51,10 +51,18 @@ test('discoverChain', function (t) {
     t.plan(2)
 
     account.discoverChain(0, 20, function (addresses, callback) {
-      return callback(null, addresses.map(function (address) {
+      var tmpAddrs = addresses.map(function (address) {
         // account.containsAddress would return true if internally the chain was iterating
         return address !== before && account.containsAddress(address)
-      }))
+      })
+
+      var addrs = {}
+
+      for (var add in tmpAddrs) {
+        addrs[add] = tmpAddrs[add]
+      }
+
+      return callback(null, addrs)
     }, function (err) {
       t.ifErr(err, 'no error')
       t.equal(account.getChainAddress(0), before, 'internal chain was unchanged')
@@ -65,9 +73,18 @@ test('discoverChain', function (t) {
     t.plan(2)
 
     account.discoverChain(0, 20, function (addresses, callback) {
-      return callback(null, addresses.map(function (address) {
+      var tmpAddrs = addresses.map(function (address) {
+        // account.containsAddress would return true if internally the chain was iterating
         return account.containsAddress(address)
-      }))
+      })
+
+      var addrs = {}
+
+      for (var add in tmpAddrs) {
+        addrs[add] = tmpAddrs[add]
+      }
+
+      return callback(null, addrs)
     }, function (err) {
       t.ifErr(err, 'no error')
       t.equal(account.getChainAddress(0), after, 'internal chain iterated forward one address')
@@ -106,7 +123,7 @@ test('getNetwork', function (t) {
   var account = Account.fromJSON(f.neutered.json)
 
   t.plan(1)
-  t.equal(account.getNetwork(), account.chains[0].__parent.keyPair.network, 'matches keyPair network')
+  t.equal(account.getNetwork(), account.chains[0].__parent.network, 'matches keyPair network')
 })
 
 test('isChainAddress', function (t) {

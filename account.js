@@ -1,4 +1,4 @@
-var bitcoinjs = require('bitcoinjs-lib')
+var bip32 = require('bip32')
 var discovery = require('./discovery')
 
 var Chain = require('./chain')
@@ -9,7 +9,7 @@ function Account (chains) {
 
 Account.fromJSON = function (json, network, addressFunction) {
   var chains = json.map(function (j) {
-    var node = bitcoinjs.HDNode.fromBase58(j.node, network)
+    var node = bip32.fromBase58(j.node, network)
 
     var chain = new Chain(node, j.k, addressFunction)
     chain.map = j.map
@@ -76,7 +76,7 @@ Account.prototype.getAllAddresses = function () {
 Account.prototype.getChain = function (i) { return this.chains[i] }
 Account.prototype.getChains = function () { return this.chains }
 Account.prototype.getChainAddress = function (i) { return this.chains[i].get() }
-Account.prototype.getNetwork = function () { return this.chains[0].getParent().keyPair.network }
+Account.prototype.getNetwork = function () { return this.chains[0].getParent().network }
 
 Account.prototype.isChainAddress = function (i, address) {
   return this.chains[i].find(address) !== undefined
