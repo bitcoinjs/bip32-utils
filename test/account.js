@@ -59,7 +59,7 @@ test('discoverChain', function (t) {
       const addrs = {}
 
       for (const add in tmpAddrs) {
-        addrs[add] = tmpAddrs[add]
+        addrs[addresses[add]] = tmpAddrs[add]
       }
 
       return callback(null, addrs)
@@ -81,7 +81,7 @@ test('discoverChain', function (t) {
       const addrs = {}
 
       for (const add in tmpAddrs) {
-        addrs[add] = tmpAddrs[add]
+        addrs[addresses[add]] = tmpAddrs[add]
       }
 
       return callback(null, addrs)
