@@ -40,7 +40,7 @@
     "tape": "^4.13.0"
   },
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=8.0.0"
   },
   "dependencies": {
     "bip32": "^2.0.5",
