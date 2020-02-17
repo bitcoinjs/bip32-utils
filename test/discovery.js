@@ -1,14 +1,15 @@
-var bitcoinjs = require('bitcoinjs-lib')
-var Chain = require('../chain')
-var discovery = require('../discovery')
-var test = require('tape')
+const bitcoinjs = require('bitcoinjs-lib')
+const bip32 = require('bip32')
+const Chain = require('../chain')
+const discovery = require('../discovery')
+const test = require('tape')
 
-var fixtures = require('./fixtures/discovery')
+const fixtures = require('./fixtures/discovery')
 
 fixtures.valid.forEach(function (f) {
-  var network = bitcoinjs.networks[f.network]
-  var external = bitcoinjs.HDNode.fromBase58(f.external, network)
-  var chain = new Chain(external, f.k)
+  const network = bitcoinjs.networks[f.network]
+  const external = bip32.fromBase58(f.external, network)
+  const chain = new Chain(external, f.k)
 
   test('discovers until ' + f.expected.used + ' for ' + f.description + ' (GAP_LIMIT = ' + f.gapLimit + ')', function (t) {
     discovery(chain, f.gapLimit, function (addresses, callback) {
@@ -19,15 +20,15 @@ fixtures.valid.forEach(function (f) {
       t.equal(used, f.expected.used, 'used as expected')
       t.equal(checked, f.expected.checked, 'checked count as expected')
 
-      var unused = checked - used
-      for (var i = 1; i < unused; ++i) chain.pop()
+      const unused = checked - used
+      for (let i = 1; i < unused; ++i) chain.pop()
 
       t.equal(chain.get(), f.expected.nextToUse, 'next address to use matches')
     })
   })
 
   test('discover calls done on error', function (t) {
-    var _err = new Error('e')
+    const _err = new Error('e')
 
     discovery(chain, f.gapLimit, function (addresses, callback) {
       return callback(_err)

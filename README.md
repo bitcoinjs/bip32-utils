@@ -13,16 +13,16 @@ Compatible with bitcoinjs-lib `^2.0.0` and `^3.0.0`.
 
 #### BIP32 Account
 ``` javascript
-var bitcoin = require('bitcoinjs-lib')
-var bip32utils = require('bip32-utils')
+let bitcoin = require('bitcoinjs-lib')
+let bip32utils = require('bip32-utils')
 
 // ...
 
-var m = bitcoin.HDNode.fromSeedHex(seedHex)
-var i = m.deriveHardened(0)
-var external = i.derive(0)
-var internal = i.derive(1)
-var account = new bip32utils.Account([
+let m = bitcoin.HDNode.fromSeedHex(seedHex)
+let i = m.deriveHardened(0)
+let external = i.derive(0)
+let internal = i.derive(1)
+let account = new bip32utils.Account([
   new bip32utils.Chain(external.neutered()),
   new bip32utils.Chain(internal.neutered())
 ])
@@ -50,17 +50,17 @@ console.log(account.derive('1QEj2WQD9vxTzsGEvnmLpvzeLVrpzyKkGt', [external, inte
 
 #### BIP32 Chains
 ``` javascript
-var bitcoin = require('bitcoinjs-lib')
-var bip32utils = require('bip32-utils')
+let bitcoin = require('bitcoinjs-lib')
+let bip32utils = require('bip32-utils')
 
 // ...
 
-var hdNode = bitcoin.HDNode.fromSeedHex(seedHex)
-var chain = new bip32utils.Chain(hdNode)
+let hdNode = bitcoin.HDNode.fromSeedHex(seedHex)
+let chain = new bip32utils.Chain(hdNode)
 
-for (var k = 0; k < 10; ++k) chain.next()
+for (let k = 0; k < 10; ++k) chain.next()
 
-var address = chain.get()
+let address = chain.get()
 
 console.log(chain.find(address))
 // => 9
@@ -72,22 +72,22 @@ console.log(chain.pop())
 
 #### BIP32 Discovery (manual)
 ``` javascript
-var bip32utils = require('bip32-utils')
-var bitcoin = require('bitcoinjs-lib')
-var Blockchain = require('cb-blockr')
+let bip32utils = require('bip32-utils')
+let bitcoin = require('bitcoinjs-lib')
+let Blockchain = require('cb-blockr')
 
 // ...
 
-var blockchain = new Blockchain('testnet')
-var hdNode = bitcoin.HDNode.fromSeedHex(seedHex)
-var chain = bip32utils.Chain(hdNode)
-var GAP_LIMIT = 20
+let blockchain = new Blockchain('testnet')
+let hdNode = bitcoin.HDNode.fromSeedHex(seedHex)
+let chain = bip32utils.Chain(hdNode)
+let GAP_LIMIT = 20
 
 bip32utils.discovery(chain, GAP_LIMIT, function(addresses, callback) {
   blockchain.addresses.summary(addresses, function(err, results) {
     if (err) return callback(err)
 
-    var areUsed = results.map(function(result) {
+    let areUsed = results.map(function(result) {
       return result.totalReceived > 0
     })
 
@@ -101,8 +101,8 @@ bip32utils.discovery(chain, GAP_LIMIT, function(addresses, callback) {
   console.log('With at least ' + (checked - used) + ' unused addresses')
 
   // throw away ALL unused addresses AFTER the last unused address
-  var unused = checked - used
-  for (var i = 1; i < unused; ++i) chain.pop()
+  let unused = checked - used
+  for (let i = 1; i < unused; ++i) chain.pop()
 
   // remember used !== total, chain may have started at a k-index > 0
   console.log('Total number of addresses (after prune): ', chain.addresses.length)

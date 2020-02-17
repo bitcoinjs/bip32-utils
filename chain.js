@@ -1,5 +1,29 @@
-function DEFAULT_ADDRESS_FUNCTION (node) {
-  return node.getAddress()
+const Buffer = require('safe-buffer').Buffer
+const createHash = require('create-hash')
+const bs58check = require('bs58check')
+
+function ripemd160 (buffer) {
+  return createHash('rmd160').update(buffer).digest()
+}
+
+function sha256 (buffer) {
+  return createHash('sha256').update(buffer).digest()
+}
+
+function hash160 (buffer) {
+  return ripemd160(sha256(buffer))
+}
+
+function toBase58Check (hash, version) {
+  const payload = Buffer.allocUnsafe(21)
+  payload.writeUInt8(version, 0)
+  hash.copy(payload, 1)
+
+  return bs58check.encode(payload)
+}
+
+function DEFAULT_ADDRESS_FUNCTION (node, network) {
+  return toBase58Check(hash160(node.publicKey), network.pubKeyHash)
 }
 
 function Chain (parent, k, addressFunction) {
@@ -13,22 +37,22 @@ function Chain (parent, k, addressFunction) {
 }
 
 Chain.prototype.__initialize = function () {
-  var address = this.addressFunction(this.__parent.derive(this.k))
+  const address = this.addressFunction(this.__parent.derive(this.k), this.__parent.network)
   this.map[address] = this.k
   this.addresses.push(address)
 }
 
 Chain.prototype.clone = function () {
-  var chain = new Chain(this.__parent, this.k, this.addressFunction)
+  const chain = new Chain(this.__parent, this.k, this.addressFunction)
 
   chain.addresses = this.addresses.concat()
-  for (var s in this.map) chain.map[s] = this.map[s]
+  for (const s in this.map) chain.map[s] = this.map[s]
 
   return chain
 }
 
 Chain.prototype.derive = function (address, parent) {
-  var k = this.map[address]
+  const k = this.map[address]
   if (k === undefined) return
 
   parent = parent || this.__parent
@@ -57,7 +81,7 @@ Chain.prototype.getParent = function () {
 
 Chain.prototype.next = function () {
   if (this.addresses.length === 0) this.__initialize()
-  var address = this.addressFunction(this.__parent.derive(this.k + 1))
+  const address = this.addressFunction(this.__parent.derive(this.k + 1), this.__parent.network)
 
   this.k += 1
   this.map[address] = this.k
@@ -67,7 +91,7 @@ Chain.prototype.next = function () {
 }
 
 Chain.prototype.pop = function () {
-  var address = this.addresses.pop()
+  const address = this.addresses.pop()
   delete this.map[address]
   this.k -= 1
 
