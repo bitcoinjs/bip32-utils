@@ -53,23 +53,30 @@ console.log(account.derive('1QEj2WQD9vxTzsGEvnmLpvzeLVrpzyKkGt', [external, inte
 
 #### BIP32 Chains
 ``` javascript
-let bitcoin = require('bitcoinjs-lib')
-let bip32utils = require('bip32-utils')
+const bip39 = require('bip39')
+const bitcoin = require('bitcoinjs-lib')
+const bip32utils = require('bip32-utils')
 
-// ...
+let mnemonic = bip39.generateMnemonic()
+let seed = bip39.mnemonicToSeedSync(mnemonic)
 
-let hdNode = bitcoin.HDNode.fromSeedHex(seedHex)
+let hdNode = bitcoin.bip32.fromSeed(seed)
+
 let chain = new bip32utils.Chain(hdNode)
+
+let address = chain.get()
+console.log(chain.find(address))
+// => 0
 
 for (let k = 0; k < 10; ++k) chain.next()
 
-let address = chain.get()
+address = chain.get()
 
 console.log(chain.find(address))
-// => 9
+// => 10
 
 console.log(chain.pop())
-// => address
+// => pops the 11th address
 ```
 
 
