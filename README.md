@@ -13,15 +13,18 @@ Compatible with bitcoinjs-lib `^2.0.0` and `^3.0.0`.
 
 #### BIP32 Account
 ``` javascript
-let bitcoin = require('bitcoinjs-lib')
-let bip32utils = require('bip32-utils')
+const bip39 = require('bip39')
+const bitcoin = require('bitcoinjs-lib')
+const bip32utils = require('bip32-utils')
 
-// ...
+let mnemonic = bip39.generateMnemonic()
+let seed = bip39.mnemonicToSeedSync(mnemonic)
 
-let m = bitcoin.HDNode.fromSeedHex(seedHex)
-let i = m.deriveHardened(0)
-let external = i.derive(0)
-let internal = i.derive(1)
+let hdNode = bitcoin.bip32.fromSeed(seed)
+
+let childNode = hdNode.deriveHardened(0)
+let external = childNode.derive(0)
+let internal = childNode.derive(1)
 let account = new bip32utils.Account([
   new bip32utils.Chain(external.neutered()),
   new bip32utils.Chain(internal.neutered())
@@ -50,23 +53,30 @@ console.log(account.derive('1QEj2WQD9vxTzsGEvnmLpvzeLVrpzyKkGt', [external, inte
 
 #### BIP32 Chains
 ``` javascript
-let bitcoin = require('bitcoinjs-lib')
-let bip32utils = require('bip32-utils')
+const bip39 = require('bip39')
+const bitcoin = require('bitcoinjs-lib')
+const bip32utils = require('bip32-utils')
 
-// ...
+let mnemonic = bip39.generateMnemonic()
+let seed = bip39.mnemonicToSeedSync(mnemonic)
 
-let hdNode = bitcoin.HDNode.fromSeedHex(seedHex)
+let hdNode = bitcoin.bip32.fromSeed(seed)
+
 let chain = new bip32utils.Chain(hdNode)
+
+let address = chain.get()
+console.log(chain.find(address))
+// => 0
 
 for (let k = 0; k < 10; ++k) chain.next()
 
-let address = chain.get()
+address = chain.get()
 
 console.log(chain.find(address))
-// => 9
+// => 10
 
 console.log(chain.pop())
-// => address
+// => pops the 11th address
 ```
 
 
