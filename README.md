@@ -13,15 +13,18 @@ Compatible with bitcoinjs-lib `^2.0.0` and `^3.0.0`.
 
 #### BIP32 Account
 ``` javascript
-let bitcoin = require('bitcoinjs-lib')
-let bip32utils = require('bip32-utils')
+const bip39 = require('bip39')
+const bitcoin = require('bitcoinjs-lib')
+const bip32utils = require('bip32-utils')
 
-// ...
+let mnemonic = bip39.generateMnemonic()
+let seed = bip39.mnemonicToSeedSync(mnemonic)
 
-let m = bitcoin.HDNode.fromSeedHex(seedHex)
-let i = m.deriveHardened(0)
-let external = i.derive(0)
-let internal = i.derive(1)
+let hdNode = bitcoin.bip32.fromSeed(seed)
+
+let childNode = hdNode.deriveHardened(0)
+let external = childNode.derive(0)
+let internal = childNode.derive(1)
 let account = new bip32utils.Account([
   new bip32utils.Chain(external.neutered()),
   new bip32utils.Chain(internal.neutered())
