@@ -50,6 +50,21 @@ console.log(account.derive('1QEj2WQD9vxTzsGEvnmLpvzeLVrpzyKkGt', [external, inte
 // => xprv9vodQPEygdPGUWeKUVNd6M2N533PvEYP21tYxznauyhrYBBCmdKxRJzmnsTsSNqfTJPrDF98GbLCm6xRnjceZ238Qkf5GQGHk79CrFqtG4d
 ```
 
+#### Account JSON
+
+Use `account.toPublicJSON()` for a watch-only export. It preserves each chain's counter and address map, but serializes its parent as an extended public key, even if the account holds private keys. It does not remove private keys from the original account.
+
+``` javascript
+const publicJSON = JSON.stringify(account.toPublicJSON())
+const watchOnly = bip32utils.Account.fromJSON(JSON.parse(publicJSON), account.getNetwork())
+```
+
+Public exports still reveal extended public keys, addresses and wallet activity. Share them only with intended recipients. A parent extended public key combined with a non-hardened descendant private key can compromise the parent private key. A watch-only export is not a signing-key backup and cannot derive hardened child keys. Pass the original network and any custom address function to `Account.fromJSON` when restoring an export.
+
+**Private backups:** `account.toJSON()` and `JSON.stringify(account)` preserve private parents and can contain extended private keys. Never send this output to logs, telemetry or shared storage as ordinary account data. Protect intentional private backups with encryption and access controls; `Account.fromJSON` retains support for restoring them.
+
+For compatibility, existing serialization keeps this behavior. Callers that need watch-only data must use `JSON.stringify(account.toPublicJSON())`; updating the dependency alone does not make implicit serialization of a private account safe.
+
 
 #### BIP32 Chains
 ``` javascript
