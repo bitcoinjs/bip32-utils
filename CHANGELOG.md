@@ -1,3 +1,8 @@
+# 0.11.2
+* add `Account.prototype.toPublicJSON()` for watch-only exports without private parent keys
+* keep private backup/import behavior unchanged; callers must explicitly use the public export
+* document private JSON serialization and public-export privacy limits
+
 # 0.11.0
 * changes `discoverChain` `queryCb` requirement to return an object, not Array
 
