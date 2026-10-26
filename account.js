@@ -96,4 +96,14 @@ Account.prototype.toJSON = function () {
   })
 }
 
+Account.prototype.toPublicJSON = function () {
+  return this.chains.map(function (chain) {
+    return {
+      k: chain.k,
+      map: chain.map,
+      node: chain.getParent().neutered().toBase58()
+    }
+  })
+}
+
 module.exports = Account
